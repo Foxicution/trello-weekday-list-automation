@@ -15,9 +15,9 @@ def construct_week(curr_day: datetime) -> list[datetime]:
 
 def moving_week(curr_day: datetime, x: int) -> datetime:
     if x < curr_day.weekday() + 1:
-        return curr_day - timedelta(curr_day.day - x - 7)
+        return curr_day + timedelta(x - (curr_day.weekday()+1) + 7)
     else:
-        return curr_day - timedelta(curr_day.day - x)
+        return curr_day + timedelta(x - (curr_day.weekday()+1))
 
 
 def get_lists(secret_key, secret_token, board_id='6244703a8200242a5fba9fa4'):
@@ -29,8 +29,9 @@ def get_lists(secret_key, secret_token, board_id='6244703a8200242a5fba9fa4'):
     return get(url, query).json()
 
 
+# noinspection PyTypeChecker
 def filter_lists(lst: list[dict]) -> list[Info]:
-    weekdays = [('MONDAY', 0), ('TUESDAY', 1), ('WEDNESDAY', 2), ('THURSDAY', 3), ('FRIDAY', 4)]
+    weekdays = [('PIRMADIENIS', 0), ('ANTRADIENIS', 1), ('TREČIADIENIS', 2), ('KETVIRTADIENIS', 3), ('PENKTADIENIS', 4)]
     dictionary = {}
     for item in lst:
         for weekday in weekdays:
@@ -66,3 +67,4 @@ def set_list(secret_key, secret_token, item: tuple[Info, datetime, float]):
 if __name__ == "__main__":
     from config import key, token
     pipe(get_id_daytime(key, token), add_positions, p(map, p(set_list, key, token)), list, print)
+    input('Press enter to close.')
