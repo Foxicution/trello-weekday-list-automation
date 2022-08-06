@@ -30,7 +30,7 @@ def get_lists(secret_key, secret_token, board_id='6244703a8200242a5fba9fa4'):
 
 
 def filter_lists(lst: list[dict]) -> list[Info]:
-    weekdays = [('MONDAY', 0), ('TUESDAY', 1), ('WEDNESDAY', 2), ('THURSDAY', 3), ('FRIDAY', 4)]
+    weekdays = [('PIRMADIENIS', 0), ('ANTRADIENIS', 1), ('TREČIADIENIS', 2), ('KETVIRTADIENIS', 3), ('PENKTADIENIS', 4)]
     dictionary = {}
     for item in lst:
         for weekday in weekdays:
