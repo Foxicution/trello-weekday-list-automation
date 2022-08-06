@@ -64,6 +64,5 @@ def set_list(secret_key, secret_token, item: tuple[Info, datetime, float]):
 
 
 if __name__ == "__main__":
-    key = 'APIKey'
-    token = 'APIToken'
+    from config import key, token
     pipe(get_id_daytime(key, token), add_positions, p(map, p(set_list, key, token)), list, print)
