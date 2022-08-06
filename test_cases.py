@@ -10,12 +10,13 @@ class TestData(NamedTuple):
 
 
 class TestInfo(NamedTuple):
-    cases: list[TestData]
     function: Callable
+    cases: list[TestData]
 
 
 Tests = [
     TestInfo(
+        function=construct_week,
         cases=[
             TestData(input=datetime(2022, 9, 1),
                      expected=[datetime(2022, 9, 5), datetime(2022, 9, 6),
@@ -26,30 +27,29 @@ Tests = [
                      expected=[datetime(2020, 5, 11), datetime(2020, 5, 12),
                                datetime(2020, 5, 6), datetime(2020, 5, 7),
                                datetime(2020, 5, 8)])
-        ],
-        function=construct_week
-    ),
+        ]),
 
     TestInfo(
+        function=moving_week,
         cases=[
             TestData(input=(datetime(2022, 7, 8), 1),
                      expected=datetime(2022, 7, 11)),
 
             TestData(input=(datetime(2022, 7, 13), 5),
                      expected=datetime(2022, 7, 15))
-        ],
-        function=moving_week),
+        ]),
 
     TestInfo(
+        function=filter_lists,
         cases=[
             TestData(input=[{'id': True, 'pos': True, 'name': 'lorem ipsum PIRMADIENIS'},
                             {'id': True, 'pos': True, 'name': 'lorem ipsum TREČIADIENIS'},
                             {'id': False, 'pos': False, 'name': 'lorem ipsum et dolor amet'}],
-                     expected=[Info(0, 'PIRMADIENIS', True), Info(2, 'TREČIADIENIS', True)])],
-        function=filter_lists
-    ),
+                     expected=[Info(0, 'PIRMADIENIS', True), Info(2, 'TREČIADIENIS', True)])
+        ]),
 
     TestInfo(
+        function=add_positions,
         cases=[
             TestData(input=[('Tue', datetime(2022, 1, 4)), ('Mon', datetime(2022, 1, 3)),
                             ('Thr', datetime(2022, 1, 6)),
@@ -59,8 +59,5 @@ Tests = [
                                ('Wed', datetime(2022, 1, 5), 234430.31054854393),
                                ('Thr', datetime(2022, 1, 6), 258558.14062690735),
                                ('Fri', datetime(2022, 1, 7), 258558.57031345367)])
-        ],
-        function=add_positions
-    )
-
+        ])
 ]
