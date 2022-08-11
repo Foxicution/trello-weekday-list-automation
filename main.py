@@ -15,7 +15,7 @@ def construct_week(curr_day: datetime) -> list[datetime]:
 
 def moving_week(curr_day: datetime, x: int) -> datetime:
     return curr_day + timedelta(x - (curr_day.weekday() + 1) +
-                                7 if x < curr_day.weekday() + 1 else 0)
+                                (7 if x < curr_day.weekday() + 1 else 0))
 
 
 def get_lists(secret_key, secret_token, board_id='6244703a8200242a5fba9fa4'):
