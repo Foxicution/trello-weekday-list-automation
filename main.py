@@ -14,10 +14,8 @@ def construct_week(curr_day: datetime) -> list[datetime]:
 
 
 def moving_week(curr_day: datetime, x: int) -> datetime:
-    if x < curr_day.weekday() + 1:
-        return curr_day + timedelta(x - (curr_day.weekday() + 1) + 7)
-    else:
-        return curr_day + timedelta(x - (curr_day.weekday() + 1))
+    return curr_day + timedelta(x - (curr_day.weekday() + 1) +
+                                (7 if x < curr_day.weekday() + 1 else 0))
 
 
 def get_lists(secret_key, secret_token, board_id='6244703a8200242a5fba9fa4'):
@@ -38,8 +36,8 @@ def filter_lists(lst: list[dict]) -> list[Info]:
             if weekday[0] in item['name']:
                 weekdays.remove(weekday)
                 dictionary[weekday] = item['id']
-        if not weekdays:
-            break  # pragma: no cover
+                if not weekdays:
+                    break
     return [Info(i[1], i[0], item) for i, item in sorted(dictionary.items(), key=lambda i: i[0][1])]
 
 
