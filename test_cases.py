@@ -45,7 +45,19 @@ Tests = [
             TestData(input=[{'id': True, 'pos': True, 'name': 'lorem ipsum PIRMADIENIS'},
                             {'id': True, 'pos': True, 'name': 'lorem ipsum TREČIADIENIS'},
                             {'id': False, 'pos': False, 'name': 'lorem ipsum et dolor amet'}],
-                     expected=[Info(0, 'PIRMADIENIS', True), Info(2, 'TREČIADIENIS', True)])
+                     expected=[Info(0, 'PIRMADIENIS', True), Info(2, 'TREČIADIENIS', True)]),
+
+            TestData(input=[{'id': False, 'pos': False, 'name': 'lorem ipsum et dolor amet'},
+                            {'id': True, 'pos': True, 'name': 'lorem ipsum PIRMADIENIS'},
+                            {'id': True, 'pos': True, 'name': 'lorem ipsum ANTRADIENIS'},
+                            {'id': True, 'pos': True, 'name': 'lorem ipsum TREČIADIENIS'},
+                            {'id': True, 'pos': True, 'name': 'lorem ipsum KETVIRTADIENIS'},
+                            {'id': True, 'pos': True, 'name': 'lorem ipsum PENKTADIENIS'},
+                            {'id': False, 'pos': False, 'name': 'lorem ipsum et dolor amet'},
+                            {'id': False, 'pos': False, 'name': 'lorem ipsum et dolor amet'}],
+                     expected=[Info(0, 'PIRMADIENIS', True), Info(1, 'ANTRADIENIS', True),
+                               Info(2, 'TREČIADIENIS', True), Info(3, 'KETVIRTADIENIS', True),
+                               Info(4, 'PENKTADIENIS', True)])
         ]),
 
     TestInfo(

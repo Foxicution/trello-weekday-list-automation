@@ -1,5 +1,6 @@
 from unittest import TestCase, main
 from inspect import signature
+
 from test_cases import Tests
 
 
@@ -19,6 +20,3 @@ for test in Tests:
                                         msg='function: {}, case: {} FAILED'
                                         .format(test_info.function.__name__, test_info.cases.index(case)))
     setattr(UnitTests, 'test_' + test.function.__name__, wrapper)
-
-if __name__ == '__main__':
-    main()

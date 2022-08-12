@@ -38,8 +38,8 @@ def filter_lists(lst: list[dict]) -> list[Info]:
             if weekday[0] in item['name']:
                 weekdays.remove(weekday)
                 dictionary[weekday] = item['id']
-                if not weekdays:
-                    break
+        if not weekdays:
+            break
     return [Info(i[1], i[0], item) for i, item in sorted(dictionary.items(), key=lambda i: i[0][1])]
 
 
