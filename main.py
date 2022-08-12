@@ -62,7 +62,11 @@ def set_list(secret_key, secret_token, item: tuple[Info, datetime, float]):
     return put(url, query).text
 
 
-if __name__ == "__main__":
+def main():
     from config import key, token
 
     pipe(get_id_daytime(key, token), add_positions, p(map, p(set_list, key, token)), list, print)
+
+
+if __name__ == "__main__":
+    main()
