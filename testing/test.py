@@ -1,8 +1,6 @@
-from unittest import TestCase, main
+from unittest import TestCase
 from inspect import signature
 from unittest.mock import MagicMock
-
-import coverage.__main__
 
 from testing.test_cases import Tests
 
@@ -36,10 +34,13 @@ class MockTests(TestCase):
 
 
 if __name__ == "__main__":
-    from coverage import Coverage
-    cov = Coverage()
-    cov.start()
-    main()
-    cov.stop()
-    cov.html_report(directory='covhtml')
+    from structs import ROOT_DIR
+    from coverage.cmdline import main
+    import os
+    import webbrowser
+    os.chdir(ROOT_DIR)
+    # TODO: Investigate why this is not working while bash script is
+    main(['run', '-m', 'unittest', 'testing/test.py'])
+    main(['html', '--omit="*/testing*"', '--directory=testing/htmlcov'])
+    webbrowser.open('file://' + os.path.realpath('testing/htmlcov/index.html'))
 

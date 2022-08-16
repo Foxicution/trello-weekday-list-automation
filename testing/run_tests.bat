@@ -1,6 +1,6 @@
 ECHO "Running tests"
 coverage run -m unittest testing/test.py
 ECHO "Generating reports"
-coverage html --omit="*/testing*"
+coverage html --omit="*/testing*" --directory=testing/htmlcov
 ECHO "Opening reports"
-start "" "htmlcov/index.html"
+start "" "testing/htmlcov/index.html"
