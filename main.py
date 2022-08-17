@@ -18,6 +18,7 @@ def moving_week(curr_day: datetime, x: int) -> datetime:
                                 (7 if x < curr_day.weekday() + 1 else 0))
 
 
+# TODO: abstract api call methods to where get and put are completely isolated
 def get_lists(secret_key, secret_token, board_id='6244703a8200242a5fba9fa4'):
     url = 'https://api.trello.com/1/boards/{}/lists/all'.format(board_id)
     query = {

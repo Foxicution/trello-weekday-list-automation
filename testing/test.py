@@ -1,6 +1,6 @@
 from unittest import TestCase
 from inspect import signature
-from unittest.mock import MagicMock
+from unittest.mock import patch
 
 from testing.test_cases import Tests
 
@@ -13,7 +13,7 @@ def add_unit_tests(test_class, tests):
                     result = test_info.function(case.input) \
                         if len(signature(test_info.function).parameters) == 1 \
                         else test_info.function(*case.input)
-                    return self.assertEqual(list(result) if type(result) == (map or zip) else result,
+                    return self.assertEqual(list(result) if type(result) == (map or zip or filter) else result,
                                             case.expected,
                                             msg='function: {}, case: {} FAILED'
                                             .format(test_info.function.__name__, test_info.cases.index(case)))
@@ -28,9 +28,25 @@ class UnitTests(TestCase):
 add_unit_tests(UnitTests, Tests)
 
 
+# TODO: Automate mocks
 class MockTests(TestCase):
-    def test_something(self):
-        self.assertEqual(1, 1)
+    @patch('main.get')
+    def test_get_lists(self, get):
+        from main import get_lists
+        get.json.return_value = ""
+        get_lists("myKey", "myToken", "")
+        get.assert_called_with("fasfasf", "", "")
+
+    @patch('main.datetime')
+    def test_today(self, datetime):
+        from main import today
+        today()
+        datetime.today.assert_called_with()
+
+    @patch('main.today')
+    @patch('main.get_lists')
+    def test_get_id_daytime(self, today, get_lists):
+        from main import get_id_daytime
 
 
 if __name__ == "__main__":
@@ -39,7 +55,9 @@ if __name__ == "__main__":
     import os
     import webbrowser
     os.chdir(ROOT_DIR)
+    print(ROOT_DIR)
     # TODO: Investigate why this is not working while bash script is
+    os.system('cmd /k "coverage html --omit="*/testing*" --directory=testing/htmlcov"')
     main(['run', '-m', 'unittest', 'testing/test.py'])
     main(['html', '--omit="*/testing*"', '--directory=testing/htmlcov'])
     webbrowser.open('file://' + os.path.realpath('testing/htmlcov/index.html'))
