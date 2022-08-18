@@ -5,6 +5,7 @@ from unittest.mock import patch
 from testing.test_cases import Tests
 
 
+# TODO: Rewrite adding unit tests
 def add_unit_tests(test_class, tests):
     for test in tests:
         def wrapper(self, test_info=test):
@@ -28,14 +29,14 @@ class UnitTests(TestCase):
 add_unit_tests(UnitTests, Tests)
 
 
-# TODO: Automate mocks
+# TODO: Automate mock tests
+@patch('main.get')
 class MockTests(TestCase):
-    @patch('main.get')
     def test_get_lists(self, get):
         from main import get_lists
-        get.json.return_value = ""
+        get.json.return_value = {}
         get_lists("myKey", "myToken", "")
-        get.assert_called_with("fasfasf", "", "")
+        get.assert_called_once()
 
     @patch('main.datetime')
     def test_today(self, datetime):
