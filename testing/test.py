@@ -1,19 +1,20 @@
 from unittest import TestCase
 from inspect import signature
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 from testing.test_cases import Tests, MockedTests, Mocks
 
 
-# TODO: Rewrite adding unit tests
+# TODO: Fix up this method
 def add_unit_tests(test_class, tests):
     for test in tests:
         def wrapper(self, test_info=test):
-            for exception_case in test_info.exception_cases:
-                with self.assertRaises(exception_case.expected):
-                    test_info.function(exception_case.input)
-
             with self.subTest(input=test_info):
+
+                for exception_case in test_info.exception_cases:
+                    with self.assertRaises(exception_case.expected):
+                        test_info.function(exception_case.input)
+
                 for case in test_info.cases:
                     result = test_info.function(case.input) \
                         if len(signature(test_info.function).parameters) == 1 \
@@ -40,17 +41,6 @@ add_unit_tests(UnitTests, Tests)
 
 class MockTests(TestCase):
     pass
-
-    # @patch('main.datetime')
-    # def test_today(self, datetime):
-    #     from main import today
-    #     today()
-    #     datetime.today.assert_called_with()
-    #
-    # @patch('main.today')
-    # @patch('main.get_lists')
-    # def test_get_id_daytime(self, today, get_lists):
-    #     from main import get_id_daytime
 
 
 add_unit_tests(MockTests, MockedTests)

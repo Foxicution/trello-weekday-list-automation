@@ -1,7 +1,7 @@
 from typing import NamedTuple, Callable, Any, Type
 from structs import Info
 from main import datetime
-from main import construct_week, moving_week, filter_lists, add_positions, get_lists
+from main import construct_week, moving_week, filter_lists, add_positions, get_lists, unpack, set_list, today
 from unittest.mock import Mock
 
 
@@ -83,45 +83,14 @@ Tests = [
                                ('Wed', datetime(2022, 1, 5), 234430.31054854393),
                                ('Thr', datetime(2022, 1, 6), 258558.14062690735),
                                ('Fri', datetime(2022, 1, 7), 258558.57031345367)])
+        ]),
+
+    TestInfo(
+        function=unpack,
+        cases=[
+            TestData(input=(lambda a, b: (a, b), ('arg1', 'arg2')),
+                     expected=('arg1', 'arg2'))
         ])
-]
-
-# TODO: 100% code coverage, add more tests, finish all mocks
-
-MockedTests = [
-    TestInfo(
-        function=get_lists,
-        cases=[
-            TestData(input=('MyKey', 'MyToken'),
-                     expected=[{'id': False, 'pos': False, 'name': 'lorem ipsum et dolor amet'},
-                               {'id': True, 'pos': True, 'name': 'lorem ipsum PIRMADIENIS'},
-                               {'id': True, 'pos': True, 'name': 'lorem ipsum ANTRADIENIS'},
-                               {'id': True, 'pos': True, 'name': 'lorem ipsum TREČIADIENIS'},
-                               {'id': True, 'pos': True, 'name': 'lorem ipsum KETVIRTADIENIS'},
-                               {'id': True, 'pos': True, 'name': 'lorem ipsum PENKTADIENIS'},
-                               {'id': False, 'pos': False, 'name': 'lorem ipsum et dolor amet'},
-                               {'id': False, 'pos': False, 'name': 'lorem ipsum et dolor amet'}])
-        ],
-        exception_cases=[
-            ExceptionData(input=('NotMyKey', 'NotMyToken'),
-                          expected=Exception)]),
-
-    TestInfo(
-        function=get_lists,
-        cases=[
-            TestData(input=('MyKey', 'MyToken'),
-                     expected=[{'id': False, 'pos': False, 'name': 'lorem ipsum et dolor amet'},
-                               {'id': True, 'pos': True, 'name': 'lorem ipsum PIRMADIENIS'},
-                               {'id': True, 'pos': True, 'name': 'lorem ipsum ANTRADIENIS'},
-                               {'id': True, 'pos': True, 'name': 'lorem ipsum TREČIADIENIS'},
-                               {'id': True, 'pos': True, 'name': 'lorem ipsum KETVIRTADIENIS'},
-                               {'id': True, 'pos': True, 'name': 'lorem ipsum PENKTADIENIS'},
-                               {'id': False, 'pos': False, 'name': 'lorem ipsum et dolor amet'},
-                               {'id': False, 'pos': False, 'name': 'lorem ipsum et dolor amet'}])
-        ],
-        exception_cases=[
-            ExceptionData(input=('NotMyKey', 'NotMyToken'),
-                          expected=Exception)])
 ]
 
 
@@ -144,23 +113,47 @@ def mock_get(url, query):
         raise Exception('Wrong URL or QUERY')
 
 
+class MockDatetime(datetime):
+    today = lambda: datetime(2022, 8, 24)
+
+
 def mock_put(url, query):
-    if url == 'https://api.trello.com/1/boards/{}/lists/all'.format('6244703a8200242a5fba9fa4') and query == {
-        'key': 'MyKey',
-        'token': 'MyToken',
-    }:
-        mock = Mock(name='get')
-        mock.json.return_value = [{'id': False, 'pos': False, 'name': 'lorem ipsum et dolor amet'},
-                                  {'id': True, 'pos': True, 'name': 'lorem ipsum PIRMADIENIS'},
-                                  {'id': True, 'pos': True, 'name': 'lorem ipsum ANTRADIENIS'},
-                                  {'id': True, 'pos': True, 'name': 'lorem ipsum TREČIADIENIS'},
-                                  {'id': True, 'pos': True, 'name': 'lorem ipsum KETVIRTADIENIS'},
-                                  {'id': True, 'pos': True, 'name': 'lorem ipsum PENKTADIENIS'},
-                                  {'id': False, 'pos': False, 'name': 'lorem ipsum et dolor amet'},
-                                  {'id': False, 'pos': False, 'name': 'lorem ipsum et dolor amet'}]
+    from re import compile
+    pattern = compile(r'\d{2}.\d{2} - [A-Z]*')
+    if url == 'https://api.trello.com/1/lists/{}/name'.format(True) and query['key'] == 'MyKey' and \
+            query['token'] == 'MyToken' and pattern.search(query['value']):
+        mock = Mock(name='put')
+        mock.text = query
         return mock
     else:
         raise Exception('Wrong URL or QUERY')
 
 
-Mocks = [MockInfo('main.get', mock_get)]
+Mocks = [MockInfo('main.get', mock_get), MockInfo('main.datetime', MockDatetime), MockInfo('main.put', mock_put)]
+
+# TODO: 100% code coverage, add more tests, finish all mocks
+MockedTests = [
+    TestInfo(
+        function=get_lists,
+        cases=[
+            TestData(input=('MyKey', 'MyToken'),
+                     expected=[{'id': False, 'pos': False, 'name': 'lorem ipsum et dolor amet'},
+                               {'id': True, 'pos': True, 'name': 'lorem ipsum PIRMADIENIS'},
+                               {'id': True, 'pos': True, 'name': 'lorem ipsum ANTRADIENIS'},
+                               {'id': True, 'pos': True, 'name': 'lorem ipsum TREČIADIENIS'},
+                               {'id': True, 'pos': True, 'name': 'lorem ipsum KETVIRTADIENIS'},
+                               {'id': True, 'pos': True, 'name': 'lorem ipsum PENKTADIENIS'},
+                               {'id': False, 'pos': False, 'name': 'lorem ipsum et dolor amet'},
+                               {'id': False, 'pos': False, 'name': 'lorem ipsum et dolor amet'}])
+        ],
+        exception_cases=[
+            ExceptionData(input=('NotMyKey', 'NotMyToken'),
+                          expected=Exception)]),
+    TestInfo(
+        function=today,
+        cases=[
+            TestData(input=(),
+                     expected=datetime(2022, 8, 24))
+        ])
+
+]
