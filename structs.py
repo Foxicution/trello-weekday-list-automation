@@ -5,6 +5,6 @@ ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 class Info(NamedTuple):
-    index: int
+    day_index: int
     name: str
     id: str
