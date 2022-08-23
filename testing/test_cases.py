@@ -2,7 +2,7 @@ from typing import NamedTuple, Callable, Any, Type
 from structs import Info
 from main import datetime
 from main import construct_week, moving_week, filter_lists, add_positions, get_lists, unpack, set_list, today, \
-    compose_info_week, main
+    compose_info_week
 from unittest.mock import Mock
 
 
