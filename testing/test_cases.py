@@ -1,7 +1,8 @@
 from typing import NamedTuple, Callable, Any, Type
 from structs import Info
 from main import datetime
-from main import construct_week, moving_week, filter_lists, add_positions, get_lists, unpack, set_list, today
+from main import construct_week, moving_week, filter_lists, add_positions, get_lists, unpack, set_list, today, \
+    compose_info_week, main
 from unittest.mock import Mock
 
 
@@ -88,9 +89,28 @@ Tests = [
     TestInfo(
         function=unpack,
         cases=[
-            TestData(input=(lambda a, b: (a, b), ('arg1', 'arg2')),
-                     expected=('arg1', 'arg2'))
-        ])
+            TestData(input=(lambda a, b: [a, b], ('arg1', 'arg2')),
+                     expected=['arg1', 'arg2'])
+        ]),
+
+    TestInfo(
+        function=compose_info_week,
+        cases=[
+            TestData(input=([{'id': False, 'pos': False, 'name': 'lorem ipsum et dolor amet'},
+                             {'id': True, 'pos': True, 'name': 'lorem ipsum PIRMADIENIS'},
+                             {'id': True, 'pos': True, 'name': 'lorem ipsum ANTRADIENIS'},
+                             {'id': True, 'pos': True, 'name': 'lorem ipsum TREČIADIENIS'},
+                             {'id': True, 'pos': True, 'name': 'lorem ipsum KETVIRTADIENIS'},
+                             {'id': True, 'pos': True, 'name': 'lorem ipsum PENKTADIENIS'},
+                             {'id': False, 'pos': False, 'name': 'lorem ipsum et dolor amet'},
+                             {'id': False, 'pos': False, 'name': 'lorem ipsum et dolor amet'}], datetime(2022, 8, 23)),
+                     expected=[(Info(0, 'PIRMADIENIS', True), datetime(2022, 8, 29)),
+                               (Info(1, 'ANTRADIENIS', True), datetime(2022, 8, 23)),
+                               (Info(2, 'TREČIADIENIS', True), datetime(2022, 8, 24)),
+                               (Info(3, 'KETVIRTADIENIS', True), datetime(2022, 8, 25)),
+                               (Info(4, 'PENKTADIENIS', True), datetime(2022, 8, 26))])
+        ]
+    )
 ]
 
 
@@ -123,7 +143,7 @@ def mock_put(url, query):
     if url == 'https://api.trello.com/1/lists/{}/name'.format(True) and query['key'] == 'MyKey' and \
             query['token'] == 'MyToken' and pattern.search(query['value']):
         mock = Mock(name='put')
-        mock.text = query
+        mock.text = 'Success'
         return mock
     else:
         raise Exception('Wrong URL or QUERY')
@@ -154,6 +174,15 @@ MockedTests = [
         cases=[
             TestData(input=(),
                      expected=datetime(2022, 8, 24))
-        ])
+        ]),
+    TestInfo(
+        function=set_list,
+        cases=[
+            TestData(input=('MyKey', 'MyToken', (Info(0, 'PIRMADIENIS', True), datetime(2022, 8, 29), 0.0)),
+                     expected='Success')
+        ],
+        exception_cases=[
+            ExceptionData(input=('NotMyKey', 'NotMyToken', True),
+                          expected=Exception)])
 
 ]

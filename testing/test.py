@@ -1,6 +1,7 @@
 from unittest import TestCase
 from inspect import signature
 from unittest.mock import patch
+from main import datetime
 
 from testing.test_cases import Tests, MockedTests, Mocks
 
@@ -19,10 +20,13 @@ def add_unit_tests(test_class, tests):
                     result = test_info.function(case.input) \
                         if len(signature(test_info.function).parameters) == 1 \
                         else test_info.function(*case.input)
-                    return self.assertEqual(list(result) if type(result) == (map or zip or filter) else result,
-                                            case.expected,
-                                            msg='function: {}, case: {} FAILED'
-                                            .format(test_info.function.__name__, test_info.cases.index(case)))
+                    return self.assertEqual(
+                        list(result) if (type(result) is not datetime) and
+                                        (type(result) is map or type(result) is zip or type(result) is filter)
+                        else result,
+                        case.expected,
+                        msg='function: {}, case: {} FAILED'
+                            .format(test_info.function.__name__, test_info.cases.index(case)))
 
         setattr(test_class, 'test_' + test.function.__name__, wrapper)
 
@@ -40,7 +44,17 @@ add_unit_tests(UnitTests, Tests)
 
 
 class MockTests(TestCase):
-    pass
+    @patch('config.key', 'MyKey')
+    @patch('config.token', 'MyToken')
+    def test_main(self):
+        import io
+        import sys
+        from main import main
+        captured_output = io.StringIO()
+        sys.stdout = captured_output
+        main()
+        sys.stdout = sys.__stdout__
+        self.assertEqual(captured_output.getvalue(), "{}\n".format(['Success']*5))
 
 
 add_unit_tests(MockTests, MockedTests)
